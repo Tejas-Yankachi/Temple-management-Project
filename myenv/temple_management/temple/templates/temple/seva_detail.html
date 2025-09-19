@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ seva.name }} - Seva Details{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Seva Image and Details -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                {% if seva.image %}
+                    <img src="{{ seva.image.url }}" class="card-img-top" alt="{{ seva.name }}" style="height: 400px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="fas fa-om fa-6x" style="color: var(--primary-color);"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h1 class="card-title mb-4">{{ seva.name }}</h1>
+                    
+                    <div class="seva-info mb-4">
+                        <p class="text-muted">
+                            <i class="fas fa-temple"></i> Temple: {{ seva.temple.name }}
+                        </p>
+                        <p>
+                            <i class="fas fa-rupee-sign"></i> Amount: {{ seva.amount }}
+                        </p>
+                        <p>
+                            <i class="fas fa-clock"></i> Duration: {{ seva.duration }} minutes
+                        </p>
+                    </div>
+
+                    <div class="seva-description">
+                        <h4>Description</h4>
+                        <p>{{ seva.description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Section -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Book This Seva</h3>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'seva_book' seva.id %}" class="btn btn-primary btn-lg w-100 mb-3">
+                            <i class="fas fa-calendar-check"></i> Book Now
+                        </a>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Please login to book this seva.
+                        </div>
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-sign-in-alt"></i> Login to Book
+                        </a>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="seva-highlights mt-4">
+                        <h5>Highlights</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check-circle text-success"></i> Authentic Rituals</li>
+                            <li><i class="fas fa-check-circle text-success"></i> Experienced Priests</li>
+                            <li><i class="fas fa-check-circle text-success"></i> Spiritual Experience</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.seva-info p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+.seva-description {
+    margin-top: 2rem;
+}
+.seva-description h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+.seva-highlights ul li {
+    margin-bottom: 0.5rem;
+}
+.seva-highlights i {
+    margin-right: 0.5rem;
+}
+</style>
+{% endblock %} 

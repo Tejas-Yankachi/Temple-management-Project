@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Festivals{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <form method="GET" class="d-flex gap-2">
+                <input type="text" name="search" class="form-control" placeholder="Search festivals..." value="{{ request.GET.search }}">
+                <input type="date" name="date" class="form-control" value="{{ request.GET.date }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Festivals Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for festival in festivals %}
+        <div class="col">
+            <div class="card h-100">
+                {% if festival.image %}
+                    <img src="{{ festival.image.url }}" class="card-img-top" alt="{{ festival.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-calendar-alt fa-4x" style="color: var(--primary-color);"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ festival.name }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-temple"></i> {{ festival.temple.name }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-calendar"></i> {{ festival.start_date|date:"F d, Y" }} - {{ festival.end_date|date:"F d, Y" }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-clock"></i> {{ festival.start_time|time:"g:i A" }} - {{ festival.end_time|time:"g:i A" }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-users"></i> Expected Attendance: {{ festival.expected_attendance }}
+                    </p>
+                    <p class="card-text">{{ festival.description|truncatewords:30 }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'festival_detail' festival.id %}" class="btn btn-outline-primary">
+                            View Details
+                        </a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'festival_book' festival.id %}" class="btn btn-primary">
+                                Book Now
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">
+                                Login to Book
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No festivals found.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if festivals.has_other_pages %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if festivals.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ festivals.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in festivals.paginator.page_range %}
+                        {% if festivals.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if festivals.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ festivals.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.date %}&date={{ request.GET.date }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

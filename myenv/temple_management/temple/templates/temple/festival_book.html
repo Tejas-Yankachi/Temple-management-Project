@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book {{ festival.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Book {{ festival.name }}</h2>
+                    
+                    <div class="festival-info mb-4">
+                        <p class="text-muted">
+                            <i class="fas fa-temple"></i> Temple: {{ festival.temple.name }}
+                        </p>
+                        <p>
+                            <i class="fas fa-calendar"></i> Date: {{ festival.start_date|date:"F d, Y" }} - {{ festival.end_date|date:"F d, Y" }}
+                        </p>
+                        <p>
+                            <i class="fas fa-clock"></i> Time: {{ festival.start_time|time:"g:i A" }} - {{ festival.end_time|time:"g:i A" }}
+                        </p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calendar-check"></i> Book Now
+                            </button>
+                            <a href="{% url 'festival_detail' festival.id %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Festival
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

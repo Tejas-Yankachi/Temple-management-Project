@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ temple.name }} - Temple Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Temple Header -->
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h1 class="display-4 mb-3">{{ temple.name }}</h1>
+            <p class="lead text-muted">{{ temple.location }}</p>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if user.is_authenticated %}
+                <a href="{% url 'temple_edit' temple.pk %}" class="btn btn-primary">Edit Temple</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Temple Image and Description -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            {% if temple.image and temple.image.url %}
+                <img src="{{ temple.image.url }}" class="img-fluid rounded shadow" alt="{{ temple.name }}">
+            {% else %}
+                <img src="{% static 'images/default-temple.jpg' %}" class="img-fluid rounded shadow" alt="{{ temple.name }}">
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">About the Temple</h3>
+                    <p class="card-text">{{ temple.description }}</p>
+                    <div class="mt-4">
+                        <h5>Quick Information</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-clock me-2"></i> Opening Hours: {{ temple.opening_time }} - {{ temple.closing_time }}</li>
+                            <li><i class="fas fa-map-marker-alt me-2"></i> Address: {{ temple.address }}</li>
+                            <li><i class="fas fa-phone me-2"></i> Contact: {{ temple.contact_number }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Temple Services -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4">Available Services</h2>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-praying-hands fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Pooja Services</h5>
+                            <p class="card-text">Book various poojas and rituals</p>
+                            <a href="{% url 'pooja_list' %}?temple={{ temple.pk }}" class="btn btn-primary">Book Pooja</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-hands fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Seva Services</h5>
+                            <p class="card-text">Participate in seva activities</p>
+                            <a href="{% url 'seva_list' %}?temple={{ temple.pk }}" class="btn btn-primary">Book Seva</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-bed fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Accommodation</h5>
+                            <p class="card-text">Book rooms for temple stay</p>
+                            <a href="{% url 'room_list' %}?temple={{ temple.pk }}" class="btn btn-primary">Book Room</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-hand-holding-heart fa-3x mb-3 text-primary"></i>
+                            <h5 class="card-title">Donations</h5>
+                            <p class="card-text">Support temple activities</p>
+                            <a href="{% url 'donation_create' %}?temple={{ temple.pk }}" class="btn btn-primary">Donate Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="mb-4">Upcoming Events</h2>
+            <div class="row g-4">
+                {% for event in events %}
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/default-event.jpg' %}" class="card-img-top" alt="{{ event.name }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ event.name }}</h5>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar me-2"></i> {{ event.date }}<br>
+                                    <i class="fas fa-clock me-2"></i> {{ event.time }}
+                                </small>
+                            </p>
+                            <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">No upcoming events at this temple.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Temple Gallery -->
+    {% if temple.gallery_images.all %}
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Temple Gallery</h2>
+            <div class="row g-4">
+                {% for image in temple.gallery_images.all %}
+                <div class="col-md-4">
+                    <img src="{{ image.image.url }}" class="img-fluid rounded shadow" alt="Temple Gallery Image">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.card {
+    transition: transform 0.3s ease;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %}

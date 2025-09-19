@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Available Rooms - Temple Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">Available Rooms</h1>
+    
+    {% if rooms %}
+    <div class="row g-4">
+        {% for room in rooms %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm hover-shadow transition">
+                {% if room.image %}
+                    <img src="{{ room.image.url }}" class="card-img-top" alt="{{ room.room_type.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <img src="https://source.unsplash.com/300x200/?temple,room" class="card-img-top" alt="{{ room.room_type.name }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ room.room_type.name }}</h5>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            <i class="fas fa-bed me-2"></i> Room Number: {{ room.room_number }}<br>
+                            <i class="fas fa-users me-2"></i> Capacity: {{ room.room_type.capacity }} persons<br>
+                            <i class="fas fa-rupee-sign me-2"></i> Price: ₹{{ room.room_type.price_per_night }}/night
+                        </small>
+                    </p>
+                    <p class="card-text flex-grow-1">{{ room.room_type.description|truncatewords:30 }}</p>
+                    
+                    <div class="mt-auto">
+                        <a href="{% url 'room_detail' room.pk %}" class="btn btn-primary w-100">
+                            <i class="fas fa-info-circle me-2"></i>View Details
+                        </a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'room_book' room.pk %}" class="btn btn-success w-100 mt-2">
+                                <i class="fas fa-calendar-check me-2"></i>Book Now
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-primary w-100 mt-2">
+                                <i class="fas fa-sign-in-alt me-2"></i>Login to Book
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="fas fa-info-circle me-2"></i> No rooms are currently available.
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.hover-shadow {
+    transition: all 0.3s ease;
+}
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+.transition {
+    transition: all 0.3s ease;
+}
+.card {
+    border: none;
+    margin-bottom: 1rem;
+}
+.card-body {
+    padding: 1.5rem;
+}
+</style>
+{% endblock %} 

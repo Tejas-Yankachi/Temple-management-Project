@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<style>
+    .profile-card {
+        transition: transform 0.3s ease;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .profile-card:hover {
+        transform: translateY(-5px);
+    }
+    .admin-section {
+        background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    }
+    .admin-link {
+        color: #2c3e50;
+        transition: all 0.3s ease;
+        padding: 8px 0;
+        display: block;
+    }
+    .admin-link:hover {
+        color: #4a90e2;
+        transform: translateX(5px);
+        text-decoration: none;
+    }
+    .activity-item {
+        border-left: 3px solid #4a90e2;
+        transition: all 0.3s ease;
+    }
+    .activity-item:hover {
+        background-color: #f8f9fa;
+        border-left-color: #357abd;
+    }
+    .btn-custom {
+        border-radius: 20px;
+        padding: 8px 20px;
+        transition: all 0.3s ease;
+    }
+    .btn-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .profile-icon {
+        color: #4a90e2;
+        transition: all 0.3s ease;
+    }
+    .profile-icon:hover {
+        transform: scale(1.1);
+    }
+    .card-header {
+        border-bottom: 2px solid #f0f0f0;
+    }
+    .list-group-item {
+        border: none;
+        margin-bottom: 10px;
+        border-radius: 8px !important;
+    }
+</style>
+
+<div class="container py-5">
+    {% if user.is_staff %}
+    <!-- Admin Navigation -->
+    <div class="card mb-4 profile-card">
+        <div class="card-header admin-section text-white">
+            <h4 class="mb-0"><i class="fas fa-cogs mr-2"></i>Administration</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-shield-alt mr-2"></i>Authentication and Authorization</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'admin:auth_group_changelist' %}" class="admin-link"><i class="fas fa-users mr-2"></i>Groups</a></li>
+                        <li><a href="{% url 'admin:auth_user_changelist' %}" class="admin-link"><i class="fas fa-user-shield mr-2"></i>Users</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="border-bottom pb-2 mb-3"><i class="fas fa-temple mr-2"></i>Temple Management</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'admin:temple_booking_changelist' %}" class="admin-link"><i class="fas fa-calendar-check mr-2"></i>Bookings</a></li>
+                        <li><a href="{% url 'admin:temple_darshan_changelist' %}" class="admin-link"><i class="fas fa-eye mr-2"></i>Darshans</a></li>
+                        <li><a href="{% url 'admin:temple_donation_changelist' %}" class="admin-link"><i class="fas fa-hand-holding-heart mr-2"></i>Donations</a></li>
+                        <li><a href="{% url 'admin:temple_event_changelist' %}" class="admin-link"><i class="fas fa-calendar-alt mr-2"></i>Events</a></li>
+                        <li><a href="{% url 'admin:temple_festival_changelist' %}" class="admin-link"><i class="fas fa-holiday mr-2"></i>Festivals</a></li>
+                        <li><a href="{% url 'admin:temple_pooja_changelist' %}" class="admin-link"><i class="fas fa-om mr-2"></i>Poojas</a></li>
+                        <li><a href="{% url 'admin:temple_room_changelist' %}" class="admin-link"><i class="fas fa-door-open mr-2"></i>Rooms</a></li>
+                        <li><a href="{% url 'admin:temple_seva_changelist' %}" class="admin-link"><i class="fas fa-hands mr-2"></i>Sevas</a></li>
+                        <li><a href="{% url 'admin:temple_temple_changelist' %}" class="admin-link"><i class="fas fa-temple mr-2"></i>Temples</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <a href="{% url 'admin:index' %}" class="btn btn-primary btn-custom mr-2"><i class="fas fa-tachometer-alt mr-2"></i>Admin Dashboard</a>
+                <a href="{% url 'admin:password_change' %}" class="btn btn-secondary btn-custom"><i class="fas fa-key mr-2"></i>Change Password</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-md-4">
+            <div class="card profile-card">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-circle fa-5x mb-3 profile-icon"></i>
+                    <h3 class="card-title">{{ user.username }}</h3>
+                    <p class="text-muted"><i class="fas fa-envelope mr-2"></i>{{ user.email }}</p>
+                    <p class="text-muted"><i class="fas fa-calendar-alt mr-2"></i>Member since: {{ user.date_joined|date:"F d, Y" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="col-md-8">
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-user-edit mr-2"></i>Profile Information</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-custom"><i class="fas fa-save mr-2"></i>Update Profile</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="card profile-card mt-4">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-history mr-2"></i>Recent Activities</h4>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% if user_bookings %}
+                            {% for booking in user_bookings %}
+                                <div class="list-group-item activity-item">
+                                    <h6 class="mb-1"><i class="fas fa-calendar-check mr-2"></i>Booking for {{ booking.event.name }}</h6>
+                                    <p class="mb-1"><i class="fas fa-clock mr-2"></i>Date: {{ booking.date }}</p>
+                                    <small class="text-muted"><i class="fas fa-info-circle mr-2"></i>Status: {{ booking.status }}</small>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted text-center"><i class="fas fa-info-circle mr-2"></i>No recent bookings found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Donation History -->
+            <div class="card profile-card mt-4">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-hand-holding-heart mr-2"></i>Donation History</h4>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% if user_donations %}
+                            {% for donation in user_donations %}
+                                <div class="list-group-item activity-item">
+                                    <h6 class="mb-1"><i class="fas fa-temple mr-2"></i>Donation to {{ donation.temple.name }}</h6>
+                                    <p class="mb-1"><i class="fas fa-rupee-sign mr-2"></i>Amount: ₹{{ donation.amount }}</p>
+                                    <small class="text-muted"><i class="fas fa-calendar mr-2"></i>Date: {{ donation.date }}</small>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted text-center"><i class="fas fa-info-circle mr-2"></i>No donation history found.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

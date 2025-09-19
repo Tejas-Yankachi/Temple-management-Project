@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Make a Donation - Temple Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Make a Donation</h2>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <!-- Temple Selection -->
+                        <div class="mb-4">
+                            <label for="temple" class="form-label">Select Temple</label>
+                            <select name="temple" id="temple" class="form-select" required>
+                                <option value="">Choose a temple...</option>
+                                {% for temple in temples %}
+                                <option value="{{ temple.id }}">{{ temple.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a temple.
+                            </div>
+                        </div>
+
+                        <!-- Donation Amount -->
+                        <div class="mb-4">
+                            <label for="donation_amount" class="form-label">Donation Amount (₹)</label>
+                            <input type="number" name="donation_amount" id="donation_amount" class="form-control" min="1" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid amount.
+                            </div>
+                        </div>
+
+                        <!-- Purpose -->
+                        <div class="mb-4">
+                            <label for="purpose" class="form-label">Purpose of Donation</label>
+                            <select name="purpose" id="purpose" class="form-select" required>
+                                <option value="">Select purpose...</option>
+                                <option value="general">General Donation</option>
+                                <option value="construction">Temple Construction</option>
+                                <option value="maintenance">Temple Maintenance</option>
+                                <option value="festival">Festival Support</option>
+                                <option value="education">Education Support</option>
+                                <option value="charity">Charity Work</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a purpose.
+                            </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="mb-4">
+                            <label for="payment_method" class="form-label">Payment Method</label>
+                            <select name="payment_method" id="payment_method" class="form-select" required>
+                                <option value="">Select payment method...</option>
+                                <option value="cash">Cash</option>
+                                <option value="card">Card</option>
+                                <option value="upi">UPI</option>
+                                <option value="net_banking">Net Banking</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a payment method.
+                            </div>
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div class="mb-4">
+                            <label for="notes" class="form-label">Additional Notes (Optional)</label>
+                            <textarea name="notes" id="notes" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-hand-holding-heart me-2"></i>Make Donation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Donation Information -->
+            <div class="card mt-4 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">Donation Information</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li><i class="fas fa-check-circle text-success me-2"></i> All donations are tax-deductible</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i> You'll receive a receipt for your donation</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i> Your contribution helps maintain temple activities</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i> Multiple payment options available</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    margin-bottom: 1rem;
+}
+.card-body {
+    padding: 2rem;
+}
+.form-label {
+    font-weight: 500;
+}
+.btn-lg {
+    padding: 0.75rem 2rem;
+}
+</style>
+
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %} 

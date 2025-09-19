@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home - ISKCON Temple{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="container-fluid px-0">
+    <div class="position-relative">
+        <img src="{% static 'ISKCON-Temple-Noida-Radha-Krishna-3.jpg' %}" alt="Temple" class="w-100" style="height: 600px; object-fit: cover; filter: brightness(0.7);">
+        <div class="position-absolute top-50 start-50 translate-middle text-center text-white" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5); width: 80%; max-width: 800px;">
+            <h1 class="display-3 fw-bold mb-4" style="font-size: 3.5rem;">Welcome to ISKCON Temple</h1>
+            <p class="lead mb-4" style="font-size: 1.5rem;">Experience divine services and spiritual activities</p>
+            <a href="{% url 'temple_list' %}" class="btn btn-primary btn-lg px-5 py-3" style="font-size: 1.2rem;">Explore Temples</a>
+        </div>
+    </div>
+</div>
+
+<!-- Featured Temples -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Featured Temples</h2>
+        <form method="get" action="{% url 'temple_list' %}" class="d-flex align-items-center mb-4">
+            <select name="temple_id" class="form-select me-2" style="max-width: 350px;">
+                <option value="">All Temples</option>
+                {% for temple in temples %}
+                    <option value="{{ temple.id }}">{{ temple.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn" style="background-color: #8B4513; color: white;">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
+        <div class="row g-4">
+            {% for temple in temples %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-shadow transition">
+                    <div class="temple-image-container">
+                        {% if temple.image and temple.image.url %}
+                            <img src="{{ temple.image.url }}" class="card-img-top temple-image" alt="{{ temple.name }}">
+                        {% else %}
+                            <img src="{% static 'temp1.jpg' %}" class="card-img-top temple-image" alt="{{ temple.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ temple.name }}</h5>
+                        <p class="card-text flex-grow-1">{{ temple.description|truncatewords:20 }}</p>
+                        <a href="{% url 'temple_detail' temple.pk %}" class="btn btn-primary mt-3">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Upcoming Events -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Upcoming Events</h2>
+        <div class="row g-4">
+            {% for event in events %}
+            <div class="col-md-3">
+                <div class="card h-100 shadow-sm hover-shadow transition">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" class="card-img-top" alt="{{ event.name }}" style="height: 180px; object-fit: cover;">
+                    {% else %}
+                        <img src="https://source.unsplash.com/300x200/?temple,event" class="card-img-top" alt="{{ event.name }}" style="height: 180px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ event.name }}</h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-2"></i> {{ event.date }}<br>
+                                <i class="fas fa-clock me-2"></i> {{ event.time }}
+                            </small>
+                        </p>
+                        <a href="{% url 'event_detail' event.pk %}" class="btn btn-primary mt-auto">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Featured Festivals -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Featured Festivals</h2>
+        <div class="row g-4">
+            {% for festival in festivals %}
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm hover-shadow transition">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            {% if festival.image %}
+                                <img src="{{ festival.image.url }}" class="img-fluid rounded-start h-100" alt="{{ festival.name }}" style="object-fit: cover;">
+                            {% else %}
+                                <img src="https://source.unsplash.com/300x400/?festival" class="img-fluid rounded-start h-100" alt="{{ festival.name }}" style="object-fit: cover;">
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body d-flex flex-column h-100">
+                                <h5 class="card-title">{{ festival.name }}</h5>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-2"></i> {{ festival.start_date }} - {{ festival.end_date }}
+                                    </small>
+                                </p>
+                                <p class="card-text flex-grow-1">{{ festival.description|truncatewords:30 }}</p>
+                                <a href="{% url 'festival_detail' festival.pk %}" class="btn btn-primary mt-3">Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Services</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card text-center h-100 shadow-sm hover-shadow transition">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fas fa-praying-hands fa-3x mb-4 text-primary"></i>
+                        <h5 class="card-title">Pooja Services</h5>
+                        <p class="card-text flex-grow-1">Book various poojas and rituals for special occasions.</p>
+                        <a href="{% url 'pooja_list' %}" class="btn btn-primary mt-3">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100 shadow-sm hover-shadow transition">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fas fa-hands fa-3x mb-4 text-primary"></i>
+                        <h5 class="card-title">Seva Services</h5>
+                        <p class="card-text flex-grow-1">Participate in various seva activities and services.</p>
+                        <a href="{% url 'seva_list' %}" class="btn btn-primary mt-3">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100 shadow-sm hover-shadow transition">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fas fa-bed fa-3x mb-4 text-primary"></i>
+                        <h5 class="card-title">Accommodation</h5>
+                        <p class="card-text flex-grow-1">Book comfortable rooms for your temple stay.</p>
+                        <a href="{% url 'room_list' %}" class="btn btn-primary mt-3">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100 shadow-sm hover-shadow transition">
+                    <div class="card-body d-flex flex-column">
+                        <i class="fas fa-hand-holding-heart fa-3x mb-4 text-primary"></i>
+                        <h5 class="card-title">Donations</h5>
+                        <p class="card-text flex-grow-1">Support temple activities through donations.</p>
+                        <a href="{% url 'donation_create' %}" class="btn btn-primary mt-3">Donate Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.hover-shadow {
+    transition: all 0.3s ease;
+}
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+.transition {
+    transition: all 0.3s ease;
+}
+.temple-image-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
+.temple-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+.temple-image:hover {
+    transform: scale(1.05);
+}
+</style>
+{% endblock %} 

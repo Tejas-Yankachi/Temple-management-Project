@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Donation Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Donation Details</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Donation ID:</strong> {{ donation.id }}</p>
+            <p><strong>Temple:</strong> {{ donation.temple }}</p>
+            <p><strong>Donor Name:</strong> {{ donation.donor_name }}</p>
+            <p><strong>Amount:</strong> ₹{{ donation.donation_amount }}</p>
+            <p><strong>Purpose:</strong> {{ donation.purpose }}</p>
+            <p><strong>Payment Method:</strong> {{ donation.payment_method }}</p>
+            <p><strong>Date:</strong> {{ donation.date_of_donation }}</p>
+            <p><strong>Status:</strong> {{ donation.status|title }}</p>
+            <p><strong>Notes:</strong> {{ donation.notes }}</p>
+            <a href="{% url 'user_donations' %}" class="btn btn-secondary mt-3">Back to My Donations</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

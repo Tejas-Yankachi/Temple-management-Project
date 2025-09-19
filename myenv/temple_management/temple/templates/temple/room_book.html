@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book Room - {{ room.room_number }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Book Room {{ room.room_number }}</h2>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-muted">Room Type</h5>
+                            <p class="lead">{{ room.room_type.name }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-muted">Price per Night</h5>
+                            <p class="lead">₹{{ room.room_type.price_per_night }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-muted">Capacity</h5>
+                            <p>{{ room.room_type.capacity }} person(s)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-muted">Beds</h5>
+                            <p>{{ room.room_type.bed_count }} bed(s)</p>
+                        </div>
+                    </div>
+
+                    {% if room.status == 'available' %}
+                        <form method="post" id="bookingForm">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-info-circle"></i> Total amount will be calculated based on your stay duration.
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-calendar-check me-2"></i> Confirm Booking
+                                </button>
+                                <a href="{% url 'room_detail' room.id %}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Back to Room
+                                </a>
+                            </div>
+                        </form>
+                    {% else %}
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i> This room is currently not available for booking.
+                        </div>
+                        <a href="{% url 'room_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Room List
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('bookingForm');
+    const checkInInput = document.querySelector('input[name="check_in"]');
+    const checkOutInput = document.querySelector('input[name="check_out"]');
+    const adultsInput = document.querySelector('input[name="adults"]');
+    const childrenInput = document.querySelector('input[name="children"]');
+    const roomCapacity = parseInt('{{ room.room_type.capacity }}');
+
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    checkInInput.min = today;
+    checkOutInput.min = today;
+
+    // Update checkout min date when check-in changes
+    checkInInput.addEventListener('change', function() {
+        checkOutInput.min = this.value;
+        if (checkOutInput.value && checkOutInput.value < this.value) {
+            checkOutInput.value = this.value;
+        }
+    });
+
+    // Validate total guests against room capacity
+    function validateGuests() {
+        const totalGuests = parseInt(adultsInput.value) + parseInt(childrenInput.value);
+        if (totalGuests > roomCapacity) {
+            adultsInput.setCustomValidity(`Total guests cannot exceed room capacity of ${roomCapacity}`);
+        } else {
+            adultsInput.setCustomValidity('');
+        }
+    }
+
+    adultsInput.addEventListener('input', validateGuests);
+    childrenInput.addEventListener('input', validateGuests);
+
+    // Form submission validation
+    form.addEventListener('submit', function(e) {
+        const checkIn = new Date(checkInInput.value);
+        const checkOut = new Date(checkOutInput.value);
+        const totalGuests = parseInt(adultsInput.value) + parseInt(childrenInput.value);
+
+        if (checkOut <= checkIn) {
+            e.preventDefault();
+            alert('Check-out date must be after check-in date');
+            return;
+        }
+
+        if (totalGuests > roomCapacity) {
+            e.preventDefault();
+            alert(`Total guests cannot exceed room capacity of ${roomCapacity}`);
+            return;
+        }
+    });
+});
+</script>
+{% endblock %} 

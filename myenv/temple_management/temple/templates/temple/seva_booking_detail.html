@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Seva Booking Details{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Seva Booking Details</h2>
+                    
+                    <div class="booking-info">
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Booking ID:</div>
+                            <div class="col-md-8">{{ booking.id }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Seva Name:</div>
+                            <div class="col-md-8">{{ booking.seva.name }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Temple:</div>
+                            <div class="col-md-8">{{ booking.seva.temple.name }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Date:</div>
+                            <div class="col-md-8">{{ booking.date }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Time:</div>
+                            <div class="col-md-8">{{ booking.time }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Amount:</div>
+                            <div class="col-md-8">₹{{ booking.amount }}</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Status:</div>
+                            <div class="col-md-8">
+                                <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elif booking.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ booking.status|title }}
+                                </span>
+                            </div>
+                        </div>
+                        {% if booking.notes %}
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-muted">Notes:</div>
+                            <div class="col-md-8">{{ booking.notes }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{% url 'user_bookings' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Bookings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.booking-info .row {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
+}
+.booking-info .row:last-child {
+    border-bottom: none;
+}
+</style>
+{% endblock %} 

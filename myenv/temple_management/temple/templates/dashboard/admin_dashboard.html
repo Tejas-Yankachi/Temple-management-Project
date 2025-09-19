@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Temple Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Admin Panel</h5>
+                    <div class="list-group">
+                        <a href="{% url 'admin_dashboard' %}" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        </a>
+                        <a href="{% url 'admin_temple_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-temple me-2"></i> Temples
+                        </a>
+                        <a href="{% url 'admin_event_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-alt me-2"></i> Events
+                        </a>
+                        <a href="{% url 'admin_pooja_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-praying-hands me-2"></i> Poojas
+                        </a>
+                        <a href="{% url 'admin_seva_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-hands me-2"></i> Sevas
+                        </a>
+                        <a href="{% url 'admin_festival_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-star me-2"></i> Festivals
+                        </a>
+                        <a href="{% url 'admin_user_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-users me-2"></i> Users
+                        </a>
+                        <a href="{% url 'admin_donation_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-hand-holding-heart me-2"></i> Donations
+                        </a>
+                        <a href="{% url 'admin_booking_management' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-calendar-check me-2"></i> Bookings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10">
+            <h2 class="mb-4">Admin Dashboard</h2>
+            
+            <!-- Statistics Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Temples</h5>
+                            <h2 class="mb-0">{{ total_temples }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <h2 class="mb-0">{{ total_users }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Bookings</h5>
+                            <h2 class="mb-0">{{ total_bookings }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Donations</h5>
+                            <h2 class="mb-0">₹{{ total_donations }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Recent Bookings</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Service</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for booking in recent_bookings %}
+                                        <tr>
+                                            <td>{{ booking.user.username }}</td>
+                                            <td>{{ booking.service_type }}</td>
+                                            <td>{{ booking.date }}</td>
+                                            <td>
+                                                <span class="badge bg-{{ booking.status_color }}">
+                                                    {{ booking.status }}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Recent Donations</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Donor</th>
+                                            <th>Amount</th>
+                                            <th>Date</th>
+                                            <th>Purpose</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for donation in recent_donations %}
+                                        <tr>
+                                            <td>{{ donation.donor.username }}</td>
+                                            <td>₹{{ donation.amount }}</td>
+                                            <td>{{ donation.date }}</td>
+                                            <td>{{ donation.purpose }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.list-group-item {
+    border: none;
+    padding: 0.8rem 1rem;
+}
+.list-group-item.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.card {
+    border: none;
+    border-radius: 10px;
+}
+.table {
+    margin-bottom: 0;
+}
+.badge {
+    padding: 0.5em 0.8em;
+}
+</style>
+{% endblock %} 

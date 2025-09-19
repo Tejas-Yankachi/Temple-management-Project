@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Booking Details{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="h5 mb-0">Booking Details</h3>
+                </div>
+                <div class="card-body">
+                    <!-- Booking Status -->
+                    <div class="text-center mb-4">
+                        <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elif booking.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %} fs-5">
+                            {{ booking.status|title }}
+                        </span>
+                    </div>
+
+                    <!-- Pooja Booking Details -->
+                    {% if booking.pooja %}
+                    <div class="booking-details">
+                        <h4 class="mb-3">Pooja Details</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Pooja Name:</strong> {{ booking.pooja.name }}</p>
+                                <p><strong>Temple:</strong> {{ booking.pooja.temple.name }}</p>
+                                <p><strong>Date:</strong> {{ booking.date }}</p>
+                                <p><strong>Time:</strong> {{ booking.time }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Amount:</strong> ₹{{ booking.amount }}</p>
+                                <p><strong>Duration:</strong> {{ booking.pooja.duration }} minutes</p>
+                                <p><strong>Best Time:</strong> {{ booking.pooja.best_time }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Seva Booking Details -->
+                    {% if booking.seva %}
+                    <div class="booking-details">
+                        <h4 class="mb-3">Seva Details</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Seva Name:</strong> {{ booking.seva.name }}</p>
+                                <p><strong>Temple:</strong> {{ booking.seva.temple.name }}</p>
+                                <p><strong>Date:</strong> {{ booking.date }}</p>
+                                <p><strong>Time:</strong> {{ booking.time }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Amount:</strong> ₹{{ booking.amount }}</p>
+                                <p><strong>Duration:</strong> {{ booking.seva.duration }} minutes</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Room Booking Details -->
+                    {% if booking.room %}
+                    <div class="booking-details">
+                        <h4 class="mb-3">Room Details</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Room Number:</strong> {{ booking.room.room_number }}</p>
+                                <p><strong>Room Type:</strong> {{ booking.room.room_type }}</p>
+                                <p><strong>Temple:</strong> {{ booking.room.temple.name }}</p>
+                                <p><strong>Check-in Date:</strong> {{ booking.check_in_date }}</p>
+                                <p><strong>Check-out Date:</strong> {{ booking.check_out_date }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Amount:</strong> ₹{{ booking.amount }}</p>
+                                <p><strong>Number of Adults:</strong> {{ booking.num_adults }}</p>
+                                <p><strong>Number of Children:</strong> {{ booking.num_children }}</p>
+                                {% if booking.special_requests %}
+                                <p><strong>Special Requests:</strong> {{ booking.special_requests }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Booking Actions -->
+                    <div class="text-center mt-4">
+                        {% if booking.status == 'pending' %}
+                            <a href="{% url 'cancel_booking' booking.id %}" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                Cancel Booking
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'user_bookings' %}" class="btn btn-secondary ms-2">
+                            Back to My Bookings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.booking-details {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.booking-details h4 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+.badge {
+    padding: 0.5rem 1rem;
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cancel Booking{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="h5 mb-0">Cancel Booking</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-exclamation-triangle text-danger fa-3x mb-3"></i>
+                        <h4>Are you sure you want to cancel this booking?</h4>
+                        <p class="text-muted">This action cannot be undone.</p>
+                    </div>
+
+                    <div class="booking-details mb-4">
+                        {% if booking.pooja %}
+                            <p><strong>Pooja:</strong> {{ booking.pooja.name }}</p>
+                            <p><strong>Date:</strong> {{ booking.date }}</p>
+                            <p><strong>Time:</strong> {{ booking.time }}</p>
+                        {% elif booking.seva %}
+                            <p><strong>Seva:</strong> {{ booking.seva.name }}</p>
+                            <p><strong>Date:</strong> {{ booking.date }}</p>
+                            <p><strong>Time:</strong> {{ booking.time }}</p>
+                        {% elif booking.room %}
+                            <p><strong>Room:</strong> {{ booking.room.room_number }}</p>
+                            <p><strong>Check-in:</strong> {{ booking.check_in_date }}</p>
+                            <p><strong>Check-out:</strong> {{ booking.check_out_date }}</p>
+                        {% endif %}
+                        <p><strong>Amount:</strong> ₹{{ booking.amount }}</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'booking_detail' booking.id %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-times"></i> Confirm Cancellation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.booking-details {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
+</style>
+{% endblock %} 

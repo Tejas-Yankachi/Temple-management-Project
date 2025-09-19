@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Donations{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-center mb-4">All Donations</h2>
+            {% if user.is_staff %}
+            <div class="text-end mb-3">
+                <a href="{% url 'donation_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> New Donation
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Donor</th>
+                            <th>Temple</th>
+                            <th>Amount</th>
+                            <th>Purpose</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            {% if user.is_staff %}
+                            <th>Actions</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for donation in donations %}
+                        <tr>
+                            <td>{{ donation.donor_name }}</td>
+                            <td>{{ donation.temple.name }}</td>
+                            <td>₹{{ donation.donation_amount }}</td>
+                            <td>{{ donation.purpose|truncatewords:10 }}</td>
+                            <td>{{ donation.date_of_donation|date:"M d, Y" }}</td>
+                            <td>
+                                <span class="badge {% if donation.status == 'completed' %}bg-success{% elif donation.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ donation.status|title }}
+                                </span>
+                            </td>
+                            {% if user.is_staff %}
+                            <td>
+                                <a href="{% url 'donation_detail' donation.id %}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="{% if user.is_staff %}7{% else %}6{% endif %}" class="text-center">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> No donations found.
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

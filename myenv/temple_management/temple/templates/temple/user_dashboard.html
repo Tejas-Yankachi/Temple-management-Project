@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard - Temple Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Welcome, {{ user.get_full_name|default:user.username }}!</h1>
+    
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Room Bookings</h5>
+                    <p class="card-text display-6">{{ room_bookings.count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Seva Bookings</h5>
+                    <p class="card-text display-6">{{ seva_bookings.count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Pooja Bookings</h5>
+                    <p class="card-text display-6">{{ pooja_bookings.count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Donations</h5>
+                    <p class="card-text display-6">{{ donations.count }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Bookings -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Recent Bookings</h5>
+                </div>
+                <div class="card-body">
+                    {% if room_bookings or seva_bookings or pooja_bookings or darshan_bookings %}
+                        <div class="list-group">
+                            {% for booking in room_bookings %}
+                                <a href="{% url 'booking_detail' booking.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Room Booking</h6>
+                                        <small>{{ booking.date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ booking.room.room_type.name }}</p>
+                                </a>
+                            {% endfor %}
+                            
+                            {% for booking in seva_bookings %}
+                                <a href="{% url 'seva_detail' booking.seva.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Seva Booking</h6>
+                                        <small>{{ booking.booking_date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ booking.seva.name }}</p>
+                                </a>
+                            {% endfor %}
+                            
+                            {% for booking in pooja_bookings %}
+                                <a href="{% url 'pooja_detail' booking.pooja.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Pooja Booking</h6>
+                                        <small>{{ booking.booking_date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ booking.pooja.name }}</p>
+                                </a>
+                            {% endfor %}
+                            
+                            {% for booking in darshan_bookings %}
+                                <a href="{% url 'darshan_detail' booking.darshan.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">Darshan Booking</h6>
+                                        <small>{{ booking.booking_date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ booking.darshan.name }}</p>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recent bookings found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Donations -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Recent Donations</h5>
+                </div>
+                <div class="card-body">
+                    {% if donations %}
+                        <div class="list-group">
+                            {% for donation in donations %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ donation.purpose }}</h6>
+                                        <small>{{ donation.date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">Amount: ₹{{ donation.donation_amount }}</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recent donations found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Upcoming Events -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Upcoming Events</h5>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_events %}
+                        <div class="list-group">
+                            {% for event in upcoming_events %}
+                                <a href="{% url 'event_detail' event.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ event.name }}</h6>
+                                        <small>{{ event.date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ event.description|truncatewords:20 }}</p>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No upcoming events found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Festivals -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Upcoming Festivals</h5>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_festivals %}
+                        <div class="list-group">
+                            {% for festival in upcoming_festivals %}
+                                <a href="{% url 'festival_detail' festival.pk %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1">{{ festival.name }}</h6>
+                                        <small>{{ festival.date|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ festival.description|truncatewords:20 }}</p>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No upcoming festivals found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: transform 0.2s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .card-header {
+        border-bottom: none;
+    }
+    
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %} 

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Darshan Details{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Darshan Details</h2>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Temple: {{ darshan.temple.name }}</h4>
+            <p class="card-text"><strong>Start Time:</strong> {{ darshan.start_time|time:"g:i A" }}</p>
+            <p class="card-text"><strong>End Time:</strong> {{ darshan.end_time|time:"g:i A" }}</p>
+            <p class="card-text"><strong>Max Capacity:</strong> {{ darshan.max_capacity }}</p>
+            <p class="card-text"><strong>Description:</strong> {{ darshan.description }}</p>
+            {% if darshan.image %}
+                <img src="{{ darshan.image.url }}" alt="Darshan Image" class="img-fluid mt-3" style="max-width: 400px;">
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

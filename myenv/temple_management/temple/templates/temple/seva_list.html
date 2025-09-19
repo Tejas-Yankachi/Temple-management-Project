@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sevas{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <form method="GET" class="d-flex gap-2">
+                <input type="text" name="search" class="form-control" placeholder="Search sevas..." value="{{ request.GET.search }}">
+                <select name="temple" class="form-select">
+                    <option value="">All Temples</option>
+                    {% for temple in temples %}
+                        <option value="{{ temple.id }}" {% if request.GET.temple == temple.id|stringformat:"i" %}selected{% endif %}>
+                            {{ temple.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sevas Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for seva in sevas %}
+        <div class="col">
+            <div class="card h-100">
+                {% if seva.image %}
+                    <img src="{{ seva.image.url }}" class="card-img-top" alt="{{ seva.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-om fa-4x" style="color: var(--primary-color);"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ seva.name }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-temple"></i> {{ seva.temple.name }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-rupee-sign"></i> {{ seva.price }}
+                    </p>
+                    <p class="card-text">
+                        <i class="fas fa-clock"></i> Duration: {{ seva.duration }} minutes
+                    </p>
+                    <p class="card-text">{{ seva.description|truncatewords:30 }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'seva_detail' seva.id %}" class="btn btn-outline-primary">
+                            View Details
+                        </a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'seva_book' seva.id %}" class="btn btn-primary">
+                                Book Now
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-primary">
+                                Login to Book
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No sevas found.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if sevas.has_other_pages %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if sevas.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ sevas.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.temple %}&temple={{ request.GET.temple }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in sevas.paginator.page_range %}
+                        {% if sevas.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.temple %}&temple={{ request.GET.temple }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if sevas.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ sevas.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.temple %}&temple={{ request.GET.temple }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

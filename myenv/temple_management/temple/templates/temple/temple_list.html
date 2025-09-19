@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Temples{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Search Section -->
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <form method="GET" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search temples..." value="{{ request.GET.search }}">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Temples Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for temple in temples %}
+        <div class="col">
+            <div class="card h-100">
+                {% if temple.image %}
+                    <img src="{{ temple.image.url }}" class="card-img-top" alt="{{ temple.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-temple fa-4x" style="color: var(--primary-color);"></i>
+                    </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ temple.name }}</h5>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-map-marker-alt"></i> {{ temple.location }}
+                    </p>
+                    <p class="card-text">{{ temple.description|truncatewords:30 }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'temple_detail' temple.id %}" class="btn btn-outline-primary">
+                            View Details
+                        </a>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'donation_create' %}?temple={{ temple.id }}" class="btn btn-primary">
+                                Donate
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No temples found.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if temples.has_other_pages %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if temples.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ temples.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in temples.paginator.page_range %}
+                        {% if temples.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if temples.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ temples.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 

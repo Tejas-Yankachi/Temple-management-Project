@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Bookings - Temple Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="text-center mb-5">My Bookings</h1>
+
+    <!-- Pooja Bookings -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="h5 mb-0">Pooja Bookings</h3>
+        </div>
+        <div class="card-body">
+            {% if pooja_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Pooja Name</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in pooja_bookings %}
+                            <tr>
+                                <td>{{ booking.pooja.name }}</td>
+                                <td>{{ booking.date }}</td>
+                                <td>{{ booking.time }}</td>
+                                <td>
+                                    <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elif booking.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ booking.status|title }}
+                                    </span>
+                                </td>
+                                <td>₹{{ booking.amount }}</td>
+                                <td>
+                                    <a href="{% url 'pooja_booking_detail' booking.id %}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center mb-0">No pooja bookings found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Seva Bookings -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h3 class="h5 mb-0">Seva Bookings</h3>
+        </div>
+        <div class="card-body">
+            {% if seva_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Seva Name</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in seva_bookings %}
+                            <tr>
+                                <td>{{ booking.seva.name }}</td>
+                                <td>{{ booking.date }}</td>
+                                <td>{{ booking.time }}</td>
+                                <td>
+                                    <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elif booking.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ booking.status|title }}
+                                    </span>
+                                </td>
+                                <td>₹{{ booking.amount }}</td>
+                                <td>
+                                    <a href="{% url 'seva_booking_detail' booking.id %}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center mb-0">No seva bookings found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Room Bookings -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h3 class="h5 mb-0">Room Bookings</h3>
+        </div>
+        <div class="card-body">
+            {% if room_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Room Type</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in room_bookings %}
+                            <tr>
+                                <td>{{ booking.room.room_type }}</td>
+                                <td>{{ booking.check_in_date }}</td>
+                                <td>{{ booking.check_out_date }}</td>
+                                <td>
+                                    <span class="badge {% if booking.status == 'confirmed' %}bg-success{% elif booking.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ booking.status|title }}
+                                    </span>
+                                </td>
+                                <td>₹{{ booking.amount }}</td>
+                                <td>
+                                    <a href="{% url 'booking_detail' booking.id %}" class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center mb-0">No room bookings found.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="text-center mt-4">
+        <a href="{% url 'pooja_list' %}" class="btn btn-primary me-2">Book Pooja</a>
+        <a href="{% url 'seva_list' %}" class="btn btn-success me-2">Book Seva</a>
+        <a href="{% url 'room_list' %}" class="btn btn-info">Book Room</a>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    margin-bottom: 2rem;
+}
+.card-header {
+    border-bottom: none;
+}
+.table th {
+    font-weight: 600;
+}
+.badge {
+    padding: 0.5em 0.8em;
+}
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %} 
